@@ -1,0 +1,135 @@
+# Generation of Kubernetes YAML is still under development!
+#
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-2.2.1
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2021-01-12T12:43:05Z"
+  labels:
+    app: mymq
+  name: mymq
+spec:
+  containers:
+  - command:
+    - broker
+    env:
+    - name: PATH
+      value: /opt/openjdk8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: JAVA_HOME
+      value: /opt/openjdk8
+    - name: ROCKETMQ_HOME
+      value: /root
+    - name: HOST_IP
+      value: 192.168.31.13
+    - name: HOSTNAME
+      value: mymq
+    image: quay.io/lcgong/rocketmq-small-broker:21001
+    name: broker
+    ports:
+    - containerPort: 9876
+      hostPort: 9876
+      protocol: TCP
+    - containerPort: 10911
+      hostPort: 10911
+      protocol: TCP
+    - containerPort: 10909
+      hostPort: 10909
+      protocol: TCP
+    - containerPort: 8080
+      hostPort: 9888
+      protocol: TCP
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities: {}
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    tty: true
+    volumeMounts:
+    - mountPath: /root/logs
+      name: w-rocketmq-logs
+    - mountPath: /root/store
+      name: w-rocketmq-store
+    workingDir: /root
+  - command:
+    - console
+    env:
+    - name: PATH
+      value: /opt/openjdk8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: JAVA_HOME
+      value: /opt/openjdk8
+    - name: NAMESRV_ADDR
+      value: localhost:9876
+    - name: HOSTNAME
+      value: mymq
+    image: quay.io/lcgong/rocketmq-console:2.0.0
+    name: console
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities: {}
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    tty: true
+    workingDir: /root
+  - command:
+    - namesrv
+    env:
+    - name: PATH
+      value: /opt/openjdk8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: JAVA_HOME
+      value: /opt/openjdk8
+    - name: ROCKETMQ_HOME
+      value: /root
+    - name: HOSTNAME
+      value: mymq
+    image: quay.io/lcgong/rocketmq-small-namesrv:21001
+    name: namesrv
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities: {}
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    tty: true
+    volumeMounts:
+    - mountPath: /root/logs
+      name: w-rocketmq-logs
+    - mountPath: /root/store
+      name: w-rocketmq-store
+    workingDir: /root
+  restartPolicy: Never
+  volumes:
+  - hostPath:
+      path: /w/rocketmq/logs
+      type: Directory
+    name: w-rocketmq-logs
+  - hostPath:
+      path: /w/rocketmq/store
+      type: Directory
+    name: w-rocketmq-store
+status: {}
+---
+metadata:
+  creationTimestamp: null
+spec: {}
+status:
+  loadBalancer: {}
